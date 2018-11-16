@@ -754,7 +754,7 @@ function renderModels() {
 		}
 		console.log(sortedTri[0]);
 		// DO sorting
-
+		sortedTri = insertionSort(sortedTri);
 
 
 		//console.log(sortedTri[1]);
@@ -817,6 +817,20 @@ function renderModels() {
   
 } // end render model
 
+function insertionSort(array) {
+  var length = array.length;
+  
+  for(var i = 1, j; i < length; i++) {
+    var temp = array[i];
+    for(var j = i - 1; j >= 0 && array[j].distance > temp.distance; j--) {
+      array[j+1] = array[j];
+    }
+    array[j+1] = temp;
+  }
+  
+  return array;
+}
+
 
 function reordering(nonOpaque) {
 	var sortedTri = [];
@@ -851,7 +865,7 @@ function reordering(nonOpaque) {
 			sortedTri[count2].translation = inputTriangles[nonOpaque[i]].translation;
 			sortedTri[count2].xAxis = inputTriangles[nonOpaque[i]].xAxis;
 			sortedTri[count2++].yAxis = inputTriangles[nonOpaque[i]].yAxis;
-			//Assign the center
+			
 
 
 		}
