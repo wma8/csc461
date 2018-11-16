@@ -797,7 +797,7 @@ function renderModels() {
 			gl.uniform1i(samplerImage, 0);
 			// triangle buffer: activate and render
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nTriangleBuffers[whichSet]); // activate
-			gl.drawElements(gl.TRIANGLES, 3 , gl.UNSIGNED_SHORT, 0); // render
+			gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0); // render
 			whichSet++;
 		} // end for each triangle set
 
@@ -862,6 +862,8 @@ function reordering(nonOpaque) {
 			sortedTri[count2].material = inputTriangles[nonOpaque[i]].material;
 			sortedTri[count2].on = inputTriangles[nonOpaque[i]].on;
 			sortedTri[count2].texture = inputTriangles[nonOpaque[i]].texture;
+			sortedTri[count2].center = inputTriangles[nonOpaque[i]].center;
+			sortedTri[count2].translation = inputTriangles[nonOpaque[i]].translation;
 			sortedTri[count2].xAxis = inputTriangles[nonOpaque[i]].xAxis;
 			sortedTri[count2++].yAxis = inputTriangles[nonOpaque[i]].yAxis;
 			//Assign the center
