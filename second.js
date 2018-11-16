@@ -740,7 +740,7 @@ function renderModels() {
 		var reLength = sortedTri.length;
 		var currSet;
 		for(var i = 0; i < reLength; i++) {
-			currSet = sortedTri[whichSet];
+			currSet = sortedTri[i];
 	
 			// make model transform, add to view project
 			makeModelTransform(currSet);
@@ -752,8 +752,9 @@ function renderModels() {
 			//getDistance(v, eye)
 			currSet.distance = getDistance(currSet.center, Eye);
 		}
+		console.log(sortedTri[0]);
 		// DO Calculation of distance and sorting
-
+		//console.log(sortedTri[1]);
 		var nVertexBuffers = [];
 		var nNormalBuffers = [];
 		var nUvsBuffers = [];
@@ -842,9 +843,9 @@ function reordering(nonOpaque) {
 }
 
 function getDistance(v, eye) {
-	var dx = v.x - eye.x;
-	var dy = v.y - eye.y;
-	var dz = v.z - eye.z;
+	var dx = v[0] - eye[0];
+	var dy = v[1] - eye[1];
+	var dz = v[2] - eye[2];
 	return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
