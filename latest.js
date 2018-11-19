@@ -43,6 +43,11 @@ var Eye = vec3.clone(defaultEye); // eye position in world space
 var Center = vec3.clone(defaultCenter); // view direction in world space
 var Up = vec3.clone(defaultUp); // view up vector in world space
 
+var nVertexBuffers = [];
+var nNormalBuffers = [];
+var nUvsBuffers = [];
+var nTriangleBuffers = [];
+
 var Switch = false;
 var SwitchLoc;
 // ASSIGNMENT HELPER FUNCTIONS
@@ -739,6 +744,7 @@ function renderModels() {
 		var sortedTri = reordering(nonOpaque);
 		var reLength = sortedTri.length;
 		var currSet;
+		
 		for(var i = 0; i < reLength; i++) {
 			currSet = sortedTri[i];
 	
@@ -751,34 +757,24 @@ function renderModels() {
 			// Assign the distance parameter to each tri
 			//getDistance(v, eye)
 			currSet.distance = getDistance(currSet.center, Eye);
-		}
-		console.log(sortedTri[0]);
-		// DO sorting
-		sortedTri = insertionSort(sortedTri);
 
+			nVertexBuffers[i] = gl.createBuffer(); // init empty webgl set vertex coord buffer
+			gl.bindBuffer(gl.ARRAY_BUFFER, nVertexBuffers[i]); // activate that buffer
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currSet.vertices), gl.STATIC_DRAW); // data in
+			
+			nNormalBuffers[i] = gl.createBuffer(); // init empty webgl set normal component buffer
+			gl.bindBuffer(gl.ARRAY_BUFFER, nNormalBuffers[i]); // activate that buffer
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currSet.normals), gl.STATIC_DRAW); // data in
 
-		//console.log(sortedTri[1]);
-		var nVertexBuffers = [];
-		var nNormalBuffers = [];
-		var nUvsBuffers = [];
-		var nTriangleBuffers = [];
-		for(var j = 0; j < reLength; j++) {
-			nVertexBuffers[j] = gl.createBuffer(); // init empty webgl set vertex coord buffer
-			gl.bindBuffer(gl.ARRAY_BUFFER, nVertexBuffers[j]); // activate that buffer
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sortedTri[j].vertices), gl.STATIC_DRAW); // data in
-
-			nNormalBuffers[j] = gl.createBuffer(); // init empty webgl set normal component buffer
-			gl.bindBuffer(gl.ARRAY_BUFFER, nNormalBuffers[j]); // activate that buffer
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sortedTri[j].normals), gl.STATIC_DRAW); // data in
-
-			nUvsBuffers[j] = gl.createBuffer(); // init empty webgl set vertex coord buffer
-			gl.bindBuffer(gl.ARRAY_BUFFER, nUvsBuffers[j]); // activate that buffer
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sortedTri[j].uvs), gl.STATIC_DRAW); // data in
+			nUvsBuffers[i] = gl.createBuffer(); // init empty webgl set vertex coord buffer
+			gl.bindBuffer(gl.ARRAY_BUFFER, nUvsBuffers[i]); // activate that buffer
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currSet.uvs), gl.STATIC_DRAW); // data in
 
 			nTriangleBuffers.push(gl.createBuffer()); // init empty triangle index buffer
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nTriangleBuffers[j]); // activate that buffer
-			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(sortedTri[j].triangles), gl.STATIC_DRAW); // data in
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, nTriangleBuffers[i]); // activate that buffer
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(currSet.triangles), gl.STATIC_DRAW); // data in
 		}
+		sortedTri = insertionSort(sortedTri);
 		
 		var whichSet = 0;
 		gl.enable(gl.BLEND);
@@ -822,10 +818,22 @@ function insertionSort(array) {
   
   for(var i = 1, j; i < length; i++) {
     var temp = array[i];
-    for(var j = i - 1; j >= 0 && array[j].distance > temp.distance; j--) {
+	var temp2 = nVertexBuffers[i];
+	var temp3 = nNormalBuffers[i];
+	var temp4 = nUvsBuffers[i]; 
+	var temp5 = nTriangleBuffers[i];
+    for(var j = i - 1; j >= 0 && array[j].distance < temp.distance; j--) {
       array[j+1] = array[j];
+	  nVertexBuffers[j+1] = nVertexBuffers[j];
+	  nNormalBuffers[j+1] = nNormalBuffers[j];
+	  nUvsBuffers[j+1] = nUvsBuffers[j];
+	  nTriangleBuffers[j+1] = nTriangleBuffers[j];
     }
     array[j+1] = temp;
+	nVertexBuffers[j+1] = temp2;
+	nNormalBuffers[j+1] = temp3;
+	nUvsBuffers[j+1] = temp4;
+	nTriangleBuffers[j+1] = temp5;
   }
   
   return array;
